@@ -1,9 +1,10 @@
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 import numpy
 from numpy import asarray
 import csv
 from keras.utils import to_categorical
+from sklearn.model_selection import train_test_split
 
 def label(s):
     if s == 'F':
@@ -27,23 +28,34 @@ def read_data():
 
 track_pics, directions = read_data()
 
-y_binary = to_categorical(directions)
-
 print(track_pics)
 print(directions)
-print(y_binary)
+
+train_track_pics, test_track_pics, train_directions, test_directions = train_test_split(track_pics, directions, train_size=0.2)
+
+train_catagories = to_categorical(train_directions)
+test_catagories = to_categorical(test_directions)
 
 model = Sequential()
 model.add(Dense(units=64, activation='relu', input_dim=448))
+model.add(Dropout(0.5))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(units=64, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(units=64, activation='relu'))
 model.add(Dense(units=4, activation='softmax'))
 model.compile(loss='categorical_crossentropy',
               optimizer='sgd',
               metrics=['accuracy'])
 
-model.fit(track_pics, y_binary, epochs=5, batch_size=32)
+model.fit(train_track_pics, train_catagories, epochs=5, batch_size=32)
 
-score = model.evaluate(track_pics, y_binary, verbose=0)
+score = model.evaluate(test_track_pics, test_catagories, verbose=1)
 print(score)
 
-prediction = model.predict(asarray([track_pics[0]]))
-print(prediction)
+with open("model.json", "w") as json_file:
+    json_file.write(model.to_json())
+model.save_weights("model.h5")
