@@ -31,23 +31,17 @@ track_pics, directions = read_data()
 print(track_pics)
 print(directions)
 
-train_track_pics, test_track_pics, train_directions, test_directions = train_test_split(track_pics, directions, train_size=0.2)
+train_track_pics, test_track_pics, train_directions, test_directions = train_test_split(track_pics, directions, train_size=0.8)
 
 train_catagories = to_categorical(train_directions)
 test_catagories = to_categorical(test_directions)
 
 model = Sequential()
-model.add(Dense(units=64, activation='relu', input_dim=448))
-model.add(Dropout(0.5))
-model.add(Dense(units=64, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(units=64, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(units=64, activation='relu'))
-model.add(Dropout(0.5))
-model.add(Dense(units=64, activation='relu'))
+model.add(Dense(units=128, activation='relu', input_dim=448))
+model.add(Dense(units=128, activation='relu'))
+model.add(Dense(units=128, activation='relu'))
 model.add(Dense(units=4, activation='softmax'))
-model.compile(loss='categorical_crossentropy',
+model.compile(loss='binary_crossentropy',
               optimizer='sgd',
               metrics=['accuracy'])
 

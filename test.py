@@ -27,6 +27,17 @@ def read_data():
             directions.append(label(sample[-1].upper()))
     return asarray(track_pics), asarray(directions)
 
+def parse_output(cat):
+    if cat[0] > 0.5:
+        return 0
+    if cat[1] > 0.5:
+        return 1
+    if cat[2] > 0.5:
+        return 2
+    if cat[3] > 0.5:
+        return 3
+    return -1
+
 track_pics, directions = read_data()
 
 print(track_pics)
@@ -46,6 +57,16 @@ loaded_model.load_weights("model.h5")
 print("Loaded model from disk")
 
 # evaluate loaded model on test data
-loaded_model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+loaded_model.compile(loss='binary_crossentropy', optimizer='sgd', metrics=['accuracy'])
 score = loaded_model.evaluate(test_track_pics, test_catagories, verbose=0)
 print("%s: %.2f%%" % (loaded_model.metrics_names[1], score[1]*100))
+
+prediction = loaded_model.predict(test_track_pics)
+print(prediction)
+prediction = numpy.fromiter((parse_output(xi) for xi in prediction), prediction.dtype)
+print(prediction)
+print(numpy.mean(numpy.equal(prediction, test_directions)))
+print(numpy.nanmax(prediction))
+
+# for x in numpy.nditer(prediction):
+    # print(x)
