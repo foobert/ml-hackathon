@@ -28,17 +28,10 @@ def read_data():
     return asarray(track_pics), asarray(directions)
 
 def parse_output(cat):
-    if cat[0] > 0.5:
-        return 0
-    if cat[1] > 0.5:
-        return 1
-    if cat[2] > 0.5:
-        return 2
-    if cat[3] > 0.5:
-        return 3
-    return -1
+    return numpy.argmax(cat)
 
 track_pics, directions = read_data()
+track_pics = track_pics / 255
 
 print(track_pics)
 print(directions)

@@ -27,6 +27,7 @@ def read_data():
     return asarray(track_pics), asarray(directions)
 
 track_pics, directions = read_data()
+track_pics = track_pics / 255
 
 print(track_pics)
 print(directions)
@@ -41,7 +42,7 @@ model.add(Dense(units=128, activation='relu', input_dim=448))
 model.add(Dense(units=128, activation='relu'))
 model.add(Dense(units=128, activation='relu'))
 model.add(Dense(units=4, activation='softmax'))
-model.compile(loss='binary_crossentropy',
+model.compile(loss='categorical_crossentropy',
               optimizer='sgd',
               metrics=['accuracy'])
 
